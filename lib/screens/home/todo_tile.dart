@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/todo.dart';
-import 'package:todo_app/screen/home/todo_detail.dart';
+import 'package:todo_app/screens/home/todo_detail.dart';
 
 class TodoTile extends StatelessWidget {
 

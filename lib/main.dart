@@ -1,7 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:todo_app/screen/home/todo_list.dart';
+import 'package:todo_app/screens/authenticate/register.dart';
+import 'package:todo_app/screens/authenticate/sign_in.dart';
+import 'package:todo_app/screens/home/todo_list.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -9,12 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Todo List'),
-        ),
-        body: TodoList(),
-      ),
+      home: SignIn()
     );
   }
 }
