@@ -11,6 +11,11 @@ class AuthService {
     return user != null ? CustomUser(uid: user.uid) : null;
   }
 
+  Stream<CustomUser> get user {
+    return _auth.authStateChanges()
+      .map(_userFromFirebaseUser);
+  }
+
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);

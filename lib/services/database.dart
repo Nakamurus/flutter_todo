@@ -42,14 +42,13 @@ class DatabaseService {
   UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
     return UserData(
       uid: uid,
-      name: snapshot.data()['name'],
+      name: snapshot.data()['user_name'],
       title: snapshot.data()['title'],
       detail: snapshot.data()['detail'],
       importance: snapshot.data()['importance'],
       priority: snapshot.data()['priority'],
       createdAt: snapshot.data()['createdAt'],
       deadline: snapshot.data()['deadline'],
-
     );
   }
 
