@@ -9,7 +9,7 @@ class UserData {
   final String name;
   final String title;
   final String detail;
-  final int priority;
+  final String priority;
   final int importance;
   final DateTime createdAt;
   final DateTime deadline;

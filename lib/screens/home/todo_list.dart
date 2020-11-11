@@ -1,21 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/models/todo.dart';
 import 'package:todo_app/screens/home/todo_tile.dart';
 
 class TodoList extends StatelessWidget {
 
-  final todos = List<Todo>.generate(9, (i) => Todo(
-    priority: (i+1)*100,
-    detail: 'Todo'
-    )
-  );
-
   @override
   Widget build(BuildContext context) {
+    List<Todo> tasks = Provider.of<List<Todo>>(context) ?? [];
+    tasks.map((e) => e.title != "");
+    tasks.sort((a,b) {
+      if (a.deadline.day == b.deadline.day) {
+        return a.priority.compareTo(b.priority);
+      } else {
+        return a.deadline.compareTo(b.deadline);
+      }
+    });
+
     return ListView.builder(
-      itemCount: todos.length,
+      itemCount: tasks.length,
       itemBuilder: (context, index) {
-        return TodoTile(todo: todos[index]);
+        return TodoTile(todo: tasks[index]);
       }
     );
   }

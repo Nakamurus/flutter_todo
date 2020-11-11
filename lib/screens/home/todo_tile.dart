@@ -16,10 +16,10 @@ class TodoTile extends StatelessWidget {
         child: ListTile(
           leading: CircleAvatar(
             radius: 25.0,
-            backgroundColor: Colors.brown[todo.priority],
+            backgroundColor: Colors.brown[todo.importance],
           ),
-          title: Text('Todo'),
-          subtitle: Text('Priority ${todo.priority}'),
+          title: Text(todo.title),
+          subtitle: Text('Deadline: ${todo.deadline.toString()}'),
           onTap: () {
             Navigator.push(
               context,

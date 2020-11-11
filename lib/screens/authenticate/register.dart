@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/services/auth.dart';
+import 'package:todo_app/shared/constants.dart';
 
 class Register extends StatefulWidget {
+
+  final Function toggleView;
+  Register({ this.toggleView });
+
   @override
   _RegisterState createState() => _RegisterState();
 }
@@ -10,6 +15,7 @@ class _RegisterState extends State<Register> {
 
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
+  final double _formHeight = 20.0;
 
   String email = '';
   String password = '';
@@ -22,8 +28,14 @@ class _RegisterState extends State<Register> {
       appBar: AppBar(
         elevation: 0.0,
         title: Text('Sign up to Todo Service'),
-        actions: [
-
+        actions: <Widget>[
+          FlatButton.icon(
+            icon: Icon(Icons.person),
+            label: Text('Sign in'),
+            onPressed: () {
+              widget.toggleView();
+            },
+          )
         ],
       ),
       body: Container(
@@ -32,33 +44,49 @@ class _RegisterState extends State<Register> {
           key: _formKey,
           child: Column(
             children: <Widget>[
-              SizedBox(height: 20.0),
+              SizedBox(height: _formHeight),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Email'),
+                validator: (val) => val.isEmpty ? 'Enter an email' : null,
                 onChanged: (val) {
                   setState(() => email = val);
                 },
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: _formHeight),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Password'),
+                obscureText: true,
+                validator: (val) => val.length < 6 ? 'Password length must be more than 6 chars' : null,
                 onChanged: (val) {
                   setState(() => password = val);
                 },
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: _formHeight),
               TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Name'),
+                validator: (val) => val.isEmpty ? 'Enter a name' : null,
                 onChanged: (val) {
                   setState(() => name = val);
                 },
               ),
-              SizedBox(height: 20.0),
+              SizedBox(height: _formHeight),
               RaisedButton(
-                child: Text('Register'),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+                color: Colors.pinkAccent,
+                child: Text(
+                  'Register',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onPressed: () async {
-                  dynamic result = await _auth.registerWithEmailAndPassword(email, password, name);
-                  if (result == null) {
-                    setState(() {
-                      error = 'Please supply a valid email';
-                    });
+                  if (_formKey.currentState.validate()) {
+                    dynamic result = await _auth.registerWithEmailAndPassword(email, password, name);
+                    if (result == null) {
+                      setState(() {
+                        error = 'Please supply a valid email';
+                      });
+                    }
                   }
                 },
               ),

@@ -14,13 +14,13 @@ class CreateTask extends StatefulWidget {
 class _CreateTaskState extends State<CreateTask> {
 
   final _formKey = GlobalKey<FormState>();
-  final List<int> priorities = [0, 1, 2, 3, 4, 5];
+  final List<String> priorities = List<String>.generate(5, (index) => (index + 1).toString());
   final format = DateFormat("yyyy-MM-dd HH:mm");
 
   String title;
   String detail;
+  String priority;
   int importance;
-  int priority;
   DateTime createdAt = new DateTime.now();
   DateTime deadline;
 
@@ -86,6 +86,7 @@ class _CreateTaskState extends State<CreateTask> {
                     }
                   },
                 ),
+                SizedBox(height: 20.0),
                 RaisedButton(
                   child: Text('Add task'),
                   onPressed: () async {
@@ -93,8 +94,8 @@ class _CreateTaskState extends State<CreateTask> {
                       userData.name,
                       title,
                       detail,
-                      importance,
                       priority,
+                      importance,
                       deadline,
                     );
                     Navigator.pop(context);
