@@ -19,7 +19,8 @@ class TodoTile extends StatelessWidget {
             backgroundColor: Colors.brown[todo.importance],
           ),
           title: Text(todo.title),
-          subtitle: Text('Deadline: ${todo.deadline.toString()}'),
+          // TODO replace manual translation to package-based automatical one, like intl.
+          subtitle: Text('Deadline: ${todo.deadline.year.toString()}年${todo.deadline.month.toString()}月${todo.deadline.day.toString()}日${todo.deadline.hour.toString()}時${todo.deadline.minute.toString()}分'),
           onTap: () {
             Navigator.push(
               context,

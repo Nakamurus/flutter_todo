@@ -8,11 +8,14 @@ import 'package:todo_app/services/database.dart';
 
 class Home extends StatelessWidget {
 
+  final user;
+
+  Home({ this.user });
+
   final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
-
     void _showSettingsPanel() {
       showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) {
         return Container(
@@ -24,7 +27,7 @@ class Home extends StatelessWidget {
     }
 
     return StreamProvider<List<Todo>>.value(
-      value: DatabaseService().collection,
+      value: DatabaseService(uid: user.uid).collection,
       child: Scaffold(
         appBar: AppBar(
           title: Text('Todo Service'),

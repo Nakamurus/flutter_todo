@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/user.dart';
 import 'package:todo_app/services/database.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_app/shared/constants.dart';
 
 class CreateTask extends StatefulWidget {
   @override
@@ -104,6 +104,8 @@ class _CreateTaskState extends State<CreateTask> {
               ],
             ),
           );
+        } else {
+          return Container();
         }
       }
     );

@@ -7,9 +7,11 @@ class TodoList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Todo> tasks = Provider.of<List<Todo>>(context) ?? [];
-    tasks.map((e) => e.title != "");
-    tasks.sort((a,b) {
+
+    final tasks = Provider.of<List<Todo>>(context);
+
+    tasks?.map((e) => e.title != "");
+    tasks?.sort((a,b) {
       if (a.deadline.day == b.deadline.day) {
         return a.priority.compareTo(b.priority);
       } else {
@@ -18,7 +20,7 @@ class TodoList extends StatelessWidget {
     });
 
     return ListView.builder(
-      itemCount: tasks.length,
+      itemCount: tasks?.length ?? 0,
       itemBuilder: (context, index) {
         return TodoTile(todo: tasks[index]);
       }

@@ -14,14 +14,12 @@ class DatabaseService {
   Future registerUserData(String name) async {
     return todoCollection.doc(uid).set({
       'user_name': name,
-      'tasks': FieldValue.arrayUnion([{
-        'title': '',
-        'detail': '',
-        'priority': '0',
-        'importance': 0,
-        'created_at': Timestamp.fromDate(new DateTime.now()),
-        'deadline': Timestamp.fromDate(new DateTime.now())
-      }])
+      'title': '',
+      'detail': '',
+      'priority': '0',
+      'importance': 0,
+      'created_at': Timestamp.fromDate(new DateTime.now()),
+      'deadline': Timestamp.fromDate(new DateTime.now())
     });
   }
 
@@ -29,14 +27,12 @@ class DatabaseService {
 
     return todoCollection.doc(uid).update({
       'user_name': name,
-      'tasks': FieldValue.arrayUnion([{
-        'title': title,
-        'detail': detail,
-        'priority': priority,
-        'importance': importance,
-        'created_at': Timestamp.fromDate(new DateTime.now()),
-        'deadline': Timestamp.fromDate(deadline)
-      }])
+      'title': title,
+      'detail': detail,
+      'priority': priority,
+      'importance': importance,
+      'created_at': Timestamp.fromDate(new DateTime.now()),
+      'deadline': Timestamp.fromDate(deadline)
     });
   }
 
@@ -48,31 +44,27 @@ class DatabaseService {
       detail: snapshot.data()['detail'],
       importance: snapshot.data()['importance'],
       priority: snapshot.data()['priority'],
-      createdAt: snapshot.data()['createdAt'],
-      deadline: snapshot.data()['deadline'],
+      createdAt: snapshot.data()['createdAt'].toDate(),
+      deadline: snapshot.data()['deadline'].toDate(),
     );
   }
 
-  List<Todo> _todoListFromSnapshot(QuerySnapshot snapshot) {
+  List<Todo> _todoListFromSnapshot(DocumentSnapshot snapshot) {
     final List<Todo> collection = [];
-    snapshot.docs.forEach((snapshot) {
-      snapshot.data()['tasks'].forEach((snapshot) {
-        collection.add(Todo(
-          name: snapshot['user_name'] ?? '',
-          title: snapshot['title'] ?? '',
-          detail: snapshot['detail'] ?? '',
-          priority: snapshot['priority'] ?? '0',
-          importance: snapshot['importance'] ?? 0,
-          createdAt: snapshot['createdAt']?.toDate() ?? DateTime.now(),
-          deadline: snapshot['deadline']?.toDate() ?? DateTime.now().add(Duration(days: 7)),
-        ));
-      });
+    collection.add(Todo(
+      name: snapshot.data()['user_name'],
+      title: snapshot.data()['title'],
+      detail: snapshot.data()['detail'],
+      importance: snapshot.data()['importance'],
+      priority: snapshot.data()['priority'],
+      createdAt: snapshot.data()['createdAt']?.toDate(),
+      deadline: snapshot.data()['deadline']?.toDate(),
+    ));
     return collection;
-    });
   }
 
   Stream<List<Todo>> get collection {
-    return todoCollection.snapshots()
+    return todoCollection.doc(uid).snapshots()
       .map(_todoListFromSnapshot);
   }
 
