@@ -10,40 +10,80 @@ class DatabaseService {
   final String uid;
   DatabaseService({ this.uid });
   final CollectionReference todoCollection = FirebaseFirestore.instance.collection('tasks');
+  final CollectionReference userCollection = FirebaseFirestore.instance.collection('users');
 
   Future registerUserData(String name) async {
-    return todoCollection.doc(uid).set({
+    return userCollection.doc(uid).set({
       'user_name': name,
+    });
+  }
+
+  Future addTaskToUserData(String taskId) async {
+    return userCollection.doc(uid).update({
       'tasks': FieldValue.arrayUnion([{
-        'title': '',
-        'detail': '',
-        'priority': '0',
-        'importance': 0,
-        'created_at': Timestamp.fromDate(new DateTime.now()),
-        'deadline': Timestamp.fromDate(new DateTime.now())
+        'taskId': taskId
       }])
     });
   }
 
-  Future updateUserData(String title, String detail, String priority, int importance, DateTime deadline) async {
+  Future deleteTaskFromUserData(String taskId) async {
+    print(uid);
+    print(taskId);
+    try {
+      await todoCollection.doc(taskId).update({
+        'deleted': true
+      });
+      return userCollection.doc(uid).update({
+        'tasks': FieldValue.arrayRemove([{
+          'taskId': taskId
+        }])
+      });
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
 
-    return todoCollection.doc(uid).update({
-      'tasks': FieldValue.arrayUnion([{
-        'title': title,
-        'detail': detail,
-        'priority': priority,
-        'importance': importance,
-        'created_at': Timestamp.fromDate(new DateTime.now()),
-        'deadline': Timestamp.fromDate(deadline)
-      }]),
+  Future addTaskData(String title, String detail, String priority, int importance, DateTime deadline) async {
+    final String _taskId = todoCollection.doc().id;
+    await addTaskToUserData(_taskId);
+    return todoCollection.doc(_taskId).set({
+      'uid': uid,
+      'taskId': _taskId,
+      'title': title,
+      'detail': detail,
+      'priority': priority,
+      'importance': importance,
+      'created_at': Timestamp.fromDate(new DateTime.now()),
+      'deadline': Timestamp.fromDate(deadline)
     });
   }
 
-  UserData _userDataFromSnapshot(DocumentSnapshot snapshot) {
+  Future updateTaskData(String taskId, String title, String detail, String priority, int importance, DateTime deadline) async {
+    return todoCollection.doc(taskId).update({
+      'uid': uid,
+      'taskId': taskId,
+      'title': title,
+      'detail': detail,
+      'priority': priority,
+      'importance': importance,
+      'deadline': Timestamp.fromDate(deadline)
+    });
+  }
+
+  Future deleteUserData() async {
+    try {
+      return userCollection.doc(uid).delete();
+    } catch (e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  UserData _taskDataFromSnapshot(DocumentSnapshot snapshot) {
     // snapshot.data()['tasks'].map((e) => e.title == )
     return UserData(
       uid: uid,
-      name: snapshot.data()['user_name'],
       title: snapshot.data()['title'],
       detail: snapshot.data()['detail'],
       importance: snapshot.data()['importance'],
@@ -53,24 +93,26 @@ class DatabaseService {
     );
   }
 
-  List<Todo> _todoListFromSnapshot(DocumentSnapshot snapshot) {
-    final List<Todo> collection = [];
-    snapshot.data()['tasks'].forEach((result) {
-      collection.add(Todo(
-        name: snapshot.data()['user_name'],
-        title: result['title'] ?? '',
-        detail: result['detail'] ?? '',
-        priority: result['priority'] ?? '0',
-        importance: result['importance'] ?? 0,
-        createdAt: result['createdAt']?.toDate() ?? DateTime.now(),
-        deadline: result['deadline']?.toDate() ?? DateTime.now().add(Duration(days: 7)),
-      ));
-    });
-    return collection;
+  List<Todo> _taskListFromSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      return Todo(
+        uid: doc.data()['uid'],
+        taskId: doc.data()['taskId'],
+        title: doc.data()['title'] ?? '',
+        detail: doc.data()['detail'] ?? '',
+        priority: doc.data()['priority'] ?? '0',
+        importance: doc.data()['importance'] ?? 0,
+        createdAt: doc.data()['createdAt']?.toDate() ?? DateTime.now(),
+        deadline: doc.data()['deadline']?.toDate() ?? DateTime.now().add(Duration(days: 7)),
+        deleted: doc.data()['deleted'] ?? false
+      );
+    }).toList();
   }
 
+  // TODO create Stream<Todo> to update a task.
+
   Stream<List<Todo>> get collection {
-    return todoCollection.doc(uid).snapshots()
-      .map(_todoListFromSnapshot);
+    return todoCollection.snapshots()
+      .map(_taskListFromSnapshot);
   }
 }

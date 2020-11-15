@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/services/auth.dart';
 import 'package:todo_app/shared/constants.dart';
+import 'package:todo_app/shared/loading.dart';
 
 class Register extends StatefulWidget {
 
@@ -21,10 +22,11 @@ class _RegisterState extends State<Register> {
   String password = '';
   String name = '';
   String error = '';
+  bool loading = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         title: Text('Sign up to Todo Service'),
@@ -81,10 +83,12 @@ class _RegisterState extends State<Register> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
+                    setState(() => loading = true);
                     dynamic result = await _auth.registerWithEmailAndPassword(email, password, name);
                     if (result == null) {
                       setState(() {
                         error = 'Please supply a valid email';
+                        loading = false;
                       });
                     }
                   }

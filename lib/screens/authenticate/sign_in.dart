@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/services/auth.dart';
 import 'package:todo_app/shared/constants.dart';
+import 'package:todo_app/shared/loading.dart';
 
 class SignIn extends StatefulWidget {
 
@@ -16,6 +17,7 @@ class _SignInState extends State<SignIn> {
   final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   final double _formHeight = 20.0;
+  bool loading = false;
 
   String email = '';
   String password = '';
@@ -23,7 +25,7 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       appBar: AppBar(
         actions: <Widget>[
           FlatButton.icon(
@@ -70,10 +72,12 @@ class _SignInState extends State<SignIn> {
                 ),
                 onPressed: ()  async {
                   if (_formKey.currentState.validate()) {
+                    setState(() => loading = true);
                     dynamic result = await _auth.signInWithEmailAndPassword(email, password);
                     if (result == null) {
                       setState(() {
                         error = 'Could not sign in with those credentials';
+                        loading = false;
                       });
                     }
                   }

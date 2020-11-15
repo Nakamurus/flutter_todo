@@ -84,7 +84,7 @@ class _CreateTaskState extends State<CreateTask> {
           RaisedButton(
             child: Text('Add task'),
             onPressed: () async {
-              await DatabaseService(uid: user.uid).updateUserData(
+              await DatabaseService(uid: user.uid).addTaskData(
                 title,
                 detail,
                 priority,
