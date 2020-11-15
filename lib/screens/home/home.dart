@@ -19,7 +19,7 @@ class Home extends StatelessWidget {
     void _showSettingsPanel() {
       showModalBottomSheet(context: context, isScrollControlled: true, builder: (context) {
         return Container(
-          height: MediaQuery.of(context).copyWith().size.height * 0.75,
+          height: MediaQuery.of(context).copyWith().size.height * 0.80,
           padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
           child: CreateTask(),
         );

@@ -37,14 +37,17 @@ class _CreateTaskState extends State<CreateTask> {
           ),
           SizedBox(height: 20.0),
           TextFormField(
+            decoration: textInputDecoration.copyWith(hintText: 'Task Title'),
             onChanged: (val) => setState(() => title = val)
           ),
           SizedBox(height: 20.0),
           TextFormField(
+            decoration: textInputDecoration.copyWith(hintText: 'Task Detail'),
             onChanged: (val) => setState(() => detail = val)
           ),
           SizedBox(height: 20.0),
           DropdownButtonFormField(
+            decoration: textInputDecoration.copyWith(hintText: 'Choose priority'),
             items: priorities.map((priority) {
               return DropdownMenuItem(
                 value: priority,
@@ -53,32 +56,47 @@ class _CreateTaskState extends State<CreateTask> {
             }).toList(),
             onChanged: (val) => setState(() => priority = val),
           ),
-          Slider(
-            value: (importance ?? 100).toDouble(),
-            min: 100,
-            max: 900,
-            divisions: 8,
-            onChanged: (val) => setState(() => importance = val.toInt()),
+          Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 20.0),
+                child: Text('Choose Importance from 100 to 900'),
+              ),
+              Slider(
+                value: (importance ?? 100).toDouble(),
+                min: 100,
+                max: 900,
+                divisions: 8,
+                onChanged: (val) => setState(() => importance = val.toInt()),
+              ),
+            ],
           ),
-          SizedBox(height: 20.0),
-          DateTimeField(
-            format: format,
-            onShowPicker: (context, curretValue) async {
-              final date = await showDatePicker(
-                context: context,
-                firstDate: DateTime(1900),
-                initialDate: curretValue ?? DateTime.now(),
-                lastDate: DateTime(2100));
-              if (date == null) {
-                deadline = curretValue;
-              } else {
-                final time = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.fromDateTime(curretValue ?? DateTime.now())
-                );
-                deadline = DateTimeField.combine(date, time);
-              }
-            },
+          SizedBox(height: 30.0),
+          Column(
+            children: [
+              Text('Choose Deadline Date and Time'),
+              DateTimeField(
+                format: format,
+                onShowPicker: (context, curretValue) async {
+                  final date = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(1900),
+                    initialDate: curretValue ?? DateTime.now(),
+                    lastDate: DateTime(2100),
+                  );
+                  if (date == null) {
+                    deadline = curretValue;
+                  } else {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.fromDateTime(curretValue ?? DateTime.now()),
+                    );
+                    deadline = DateTimeField.combine(date, time);
+                    return deadline;
+                  }
+                },
+              ),
+            ],
           ),
           SizedBox(height: 20.0),
           RaisedButton(
